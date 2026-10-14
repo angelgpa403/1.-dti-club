@@ -1,0 +1,40 @@
+# DTI Club — guía de puesta en marcha
+
+Esta carpeta contiene una web para la comunidad DTI Club. Incluye inicio de sesión por enlace de correo, saldo por usuario, reclamación de 10 monedas una vez al día, racha y solicitudes de canje manuales.
+
+## Archivos
+- `index.html`: la web.
+- `supabase_setup.sql`: tablas, reglas de seguridad y funciones para reclamación/canje.
+
+## 1) Crear backend gratuito con Supabase
+1. Abre https://supabase.com/ y crea un proyecto nuevo. Guarda la contraseña de base de datos en un lugar seguro.
+2. En el panel, abre **SQL Editor**, crea una consulta y pega TODO `supabase_setup.sql`. Ejecuta.
+3. En **Project Settings / API** (o **Connect**, según la interfaz), copia la Project URL y la publishable key (en proyectos antiguos puede aparecer como `anon public`).
+4. En `index.html`, reemplaza:
+   - `PEGA_AQUI_TU_PROJECT_URL`
+   - `PEGA_AQUI_TU_PUBLISHABLE_ANON_KEY`
+   Solo pega la URL y la clave pública/publishable. **Nunca** pegues `service_role` ni claves secretas en HTML.
+5. En Supabase, configura **Authentication → URL Configuration** con la URL donde publicarás la web y añade esa misma URL a Redirect URLs.
+6. Para las pruebas, usa un correo tuyo y comprueba el enlace de acceso. El correo debe poder recibir el mensaje.
+
+## 2) Probar localmente
+No abras el HTML directamente con doble clic si el navegador bloquea módulos. Puedes usar un servidor local sencillo o publicar primero en un alojamiento estático. GitHub Pages sirve archivos estáticos gratis:
+https://docs.github.com/pages
+Sube `index.html` a un repositorio. No subas contraseñas, claves secretas ni datos privados.
+
+## 3) Publicar
+En GitHub crea un repositorio público, sube `index.html`, activa **Settings → Pages** y selecciona la rama `main` y carpeta `/root`. Copia la URL publicada y configúrala en Supabase Auth URL Configuration.
+
+## 4) Qué hace la protección
+- La base de datos guarda el saldo por cuenta, no en el navegador.
+- `claim_daily()` añade exactamente 10 monedas y bloquea reclamaciones duplicadas en el mismo día UTC con una restricción única y bloqueo de fila.
+- El usuario solo puede leer su propio perfil, sus reclamaciones y sus solicitudes.
+- Los precios de los canjes se validan en el servidor.
+- Las solicitudes de canje descuentan monedas y quedan como `Pendiente` para que tú entregues la recompensa manualmente.
+
+## 5) Limitaciones importantes
+- Esto inicia sesión por correo, no verifica automáticamente si la persona pertenece a tu servidor de Discord. Para eso haría falta añadir Discord OAuth o un bot de Discord y configurarlo por separado.
+- El canje manual todavía no incluye un panel de administrador. Revisa las solicitudes en Supabase → Table Editor → `redemptions`; cambia el estado desde una herramienta de administración segura, no dando permisos de edición a los miembros.
+- El día se calcula en UTC. Por eso, la hora de reinicio puede no coincidir con la hora local de todos.
+- Las monedas son puntos de tu web, no Robux ni moneda oficial de Roblox/DTI. No prometas pases que no puedas entregar legítimamente.
+- Usa solo recompensas que puedas entregar de manera permitida. No pidas contraseñas ni tokens de Roblox o Discord.

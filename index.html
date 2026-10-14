@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DTI Club — Monedas diarias</title>
+<meta name="description" content="Reclama monedas diarias y solicita recompensas en la comunidad DTI Club.">
+<style>
+:root{--bg:#100b1b;--panel:#1d142b;--panel2:#281a39;--pink:#ff72c6;--violet:#b69aff;--text:#fff7ff;--muted:#cbbbd7;--line:#49325d;--good:#8ef0bc;--warn:#ffe6a7}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#352047 0,#100b1b 55%);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif;min-height:100vh}
+header{padding:18px max(18px,calc((100% - 1050px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid #ffffff18;background:#100b1bcc}
+.logo{font-weight:900;letter-spacing:.4px;font-size:1.15rem}.logo span{color:var(--pink)}nav{display:flex;gap:16px;flex-wrap:wrap}a{color:var(--muted);text-decoration:none}a:hover{color:white}
+main{max-width:1050px;margin:auto;padding:28px 18px 60px}.hero{text-align:center;padding:40px 10px 28px}.eyebrow{display:inline-block;border:1px solid var(--line);background:#ffffff08;padding:7px 12px;border-radius:99px;color:var(--violet);font-size:.84rem}.hero h1{font-size:clamp(2.1rem,6vw,4rem);line-height:1.05;margin:17px 0 12px}.hero h1 span{color:var(--pink)}.hero p{color:var(--muted);max-width:650px;margin:0 auto;line-height:1.6}
+.panel,.item{border:1px solid var(--line);background:linear-gradient(145deg,#241832,#171020);border-radius:20px;padding:22px;box-shadow:0 12px 35px #0002}.authrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.input{padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:#120d1c;color:white;min-width:0;font:inherit}.input.email{flex:1;min-width:200px}
+.btn{border:0;border-radius:12px;padding:13px 17px;background:linear-gradient(100deg,#ff72c6,#a78bfa);color:#24112e;font-weight:850;cursor:pointer;font-size:.95rem}.btn:disabled{background:#4d405a;color:#b7a9c4;cursor:not-allowed}.btn.secondary{background:#392749;color:white;border:1px solid var(--line)}.small{font-size:.84rem;color:var(--muted);line-height:1.5}.status{min-height:24px;color:var(--good);margin-top:12px;line-height:1.5}.status.error{color:#ffaaa9}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.stat-label{color:var(--muted);font-size:.92rem}.stat{font-size:2rem;font-weight:850;margin-top:6px}.coin{color:#ffd879}.streak{color:var(--pink)}.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 15px}.section-title h2{margin:0;font-size:1.45rem}.section-title p{margin:0;color:var(--muted);font-size:.9rem}
+.claimbox{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:16px}.claimbox p{color:var(--muted);line-height:1.5;margin:7px 0 0}
+.shop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.item{padding:18px}.item .emoji{font-size:2rem}.item h3{margin:10px 0 5px}.item p{color:var(--muted);font-size:.9rem;line-height:1.45;min-height:42px}.price{font-weight:900;color:#ffd879;margin:14px 0}.item .btn{width:100%}.notice{margin-top:18px;border:1px solid #735f35;background:#2d2416;color:var(--warn);border-radius:14px;padding:14px;line-height:1.5;font-size:.9rem}.foot{margin-top:35px;color:var(--muted);font-size:.85rem;text-align:center;line-height:1.6}.hidden{display:none!important}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.shop{grid-template-columns:repeat(2,minmax(0,1fr))}.claimbox{align-items:flex-start;flex-direction:column}.claimbox .btn{width:100%}.section-title{align-items:flex-start;flex-direction:column}}
+@media(max-width:440px){.shop{grid-template-columns:1fr}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<header><div class="logo">✦ DTI <span>CLUB</span></div><nav><a href="#racha">Racha diaria</a><a href="#tienda">Tienda</a><a href="#historial">Mis canjes</a></nav></header>
+<main>
+<section class="hero"><div class="eyebrow">♡ TU COMUNIDAD DRESS TO IMPRESS ♡</div><h1>Tu estilo. Tu racha.<br><span>Tus monedas.</span></h1><p>Entra cada día, reclama 10 monedas y ahorra para solicitar recompensas de DTI Club.</p></section>
+<section class="panel" id="cuenta">
+<h2 style="margin-top:0">Tu cuenta</h2>
+<p class="small">Inicia sesión con tu correo. Te enviaremos un enlace de acceso; no necesitas contraseña. Usa el mismo correo cada vez y no compartas el enlace de acceso.</p>
+<div id="authForm" class="authrow"><input id="email" class="input email" type="email" placeholder="tu-correo@ejemplo.com" autocomplete="email"><button id="loginBtn" class="btn">Enviar enlace de acceso</button></div>
+<div class="authrow" id="signedIn" style="display:none"><span id="userEmail" class="small"></span><button id="logoutBtn" class="btn secondary">Cerrar sesión</button></div>
+<div id="authStatus" class="status" aria-live="polite"></div>
+</section>
+<section id="dashboard" class="hidden">
+<div class="grid" style="margin-top:16px" aria-label="Tus estadísticas">
+<div class="panel"><div class="stat-label">Monedas disponibles</div><div class="stat coin" id="coins">0 ✦</div></div>
+<div class="panel"><div class="stat-label">Racha actual</div><div class="stat streak" id="streak">0 días ♡</div></div>
+<div class="panel"><div class="stat-label">Última reclamación</div><div class="stat" style="font-size:1.1rem" id="lastClaim">Todavía ninguna</div></div>
+</div>
+<section id="racha" class="panel" style="margin-top:16px"><div class="claimbox"><div><div class="eyebrow">RECOMPENSA DIARIA</div><h2 style="margin:12px 0 0">Reclama tu racha ✨</h2><p>Recibes 10 monedas una vez por día UTC. La base de datos controla las reclamaciones duplicadas.</p></div><button class="btn" id="claimBtn">♡ Reclamar +10 monedas</button></div><div class="status" id="claimStatus" aria-live="polite"></div></section>
+<div class="section-title" id="tienda"><h2>♡ Tienda de recompensas</h2><p>Precios de ejemplo · monedas virtuales</p></div><section class="shop" id="shop"></section>
+<div class="section-title" id="historial"><h2>Mis solicitudes de canje</h2></div><section class="panel"><div id="redemptions" class="small">Todavía no tienes solicitudes.</div></section>
+</section>
+<div class="notice"><strong>Antes de canjear:</strong> las monedas son puntos virtuales de DTI Club, no Robux ni moneda oficial de Roblox o Dress To Impress. Las solicitudes las revisa manualmente el equipo; no se entrega ningún pase automáticamente. No introduzcas contraseñas de Roblox/Discord ni tokens aquí.</div>
+<footer class="foot">DTI Club es una comunidad independiente y no está afiliada a Roblox ni a Dress To Impress. Solo solicita recompensas que el equipo pueda entregar de forma legítima.</footer>
+</main>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// PASO DE CONFIGURACIÓN: reemplaza estos dos valores por los de tu proyecto Supabase.
+const SUPABASE_URL = 'PEGA_AQUI_TU_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'PEGA_AQUI_TU_PUBLISHABLE_ANON_KEY';
+const configured = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PEGA_AQUI') && !SUPABASE_ANON_KEY.includes('PEGA_AQUI');
+const $ = id => document.getElementById(id);
+const rewards = [
+ {id:'vip_permanente',name:'VIP permanente',emoji:'👑',price:1200,desc:'Solicitud de canje revisada manualmente por el equipo.'},
+ {id:'custom_makeup',name:'Custom Makeup',emoji:'💄',price:900,desc:'Solicitud de canje revisada manualmente por el equipo.'},
+ {id:'fast_walk',name:'Fast Walk',emoji:'💨',price:500,desc:'Solicitud de canje revisada manualmente por el equipo.'},
+ {id:'custom_dress',name:'Custom Dress',emoji:'👗',price:750,desc:'Recompensa de comunidad; confirma disponibilidad.'},
+ {id:'pose_pack',name:'Pose Pack',emoji:'💃',price:650,desc:'Recompensa de comunidad; confirma disponibilidad.'},
+ {id:'special_pass',name:'Pase especial',emoji:'🌟',price:1500,desc:'El equipo debe definir qué recompensa ofrece.'}
+];
+let supabase = null, currentUser = null;
+function say(id,msg,error=false){$(id).textContent=msg;$(id).classList.toggle('error',error)}
+function money(n){return `${n} ✦`}
+function dateLabel(d){return d || 'Todavía ninguna'}
+function renderShop(balance){
+ const shop=$('shop');shop.innerHTML='';
+ rewards.forEach(r=>{
+  const card=document.createElement('article');card.className='item';
+  const emoji=document.createElement('div');emoji.className='emoji';emoji.textContent=r.emoji;
+  const h=document.createElement('h3');h.textContent=r.name;
+  const p=document.createElement('p');p.textContent=r.desc;
+  const price=document.createElement('div');price.className='price';price.textContent=money(r.price);
+  const b=document.createElement('button');b.className='btn secondary';b.textContent=balance>=r.price?'Solicitar canje':'Seguir ahorrando';b.disabled=balance<r.price;
+  b.addEventListener('click',async()=>{
+    b.disabled=true;say('claimStatus','Enviando solicitud…');
+    const {data,error}=await supabase.rpc('request_redemption',{p_reward_id:r.id});
+    if(error){say('claimStatus',error.message.includes('INSUFFICIENT_COINS')?'Todavía no tienes monedas suficientes.':'No se pudo enviar el canje. Inténtalo de nuevo.',true);}
+    else {say('claimStatus','Solicitud enviada. El equipo de DTI Club revisará tu canje.');await loadDashboard();}
+    b.disabled=false;
+  });
+  card.append(emoji,h,p,price,b);shop.append(card);
+ });
+}
+async function loadDashboard(){
+ if(!currentUser)return;
+ const {data,error}=await supabase.from('profiles').select('coins,streak,last_claim_date').eq('id',currentUser.id).single();
+ if(error){say('claimStatus','No se pudo cargar tu perfil. Revisa que hayas ejecutado el SQL de configuración.',true);return}
+ $('coins').textContent=money(data.coins);$('streak').textContent=`${data.streak} ${data.streak===1?'día ♡':'días ♡'}`;$('lastClaim').textContent=dateLabel(data.last_claim_date);
+ renderShop(data.coins);
+ const {data:items,error:histError}=await supabase.from('redemptions').select('id,reward_name,cost,status,created_at').order('created_at',{ascending:false}).limit(20);
+ if(histError){$('redemptions').textContent='No se pudo cargar el historial.';}
+ else if(!items?.length){$('redemptions').textContent='Todavía no tienes solicitudes.';}
+ else {
+  const wrap=document.createElement('div');
+  items.forEach(item=>{const row=document.createElement('p');row.textContent=`${item.reward_name} — ${item.cost} ✦ — ${item.status} — ${new Date(item.created_at).toLocaleDateString()}`;wrap.append(row)});
+  $('redemptions').replaceChildren(wrap);
+ }
+}
+async function showSession(session){
+ currentUser=session?.user||null;
+ $('authForm').style.display=currentUser?'none':'flex';$('signedIn').style.display=currentUser?'flex':'none';$('dashboard').classList.toggle('hidden',!currentUser);
+ if(currentUser){$('userEmail').textContent=`Sesión: ${currentUser.email}`;say('authStatus','Sesión iniciada.');await loadDashboard();}
+}
+$('loginBtn').addEventListener('click',async()=>{
+ if(!configured){say('authStatus','Falta configurar Supabase. Sigue el archivo LEEME.txt incluido en el proyecto.',true);return}
+ const email=$('email').value.trim();
+ if(!email){say('authStatus','Escribe tu correo electrónico.',true);return}
+ $('loginBtn').disabled=true;
+ const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split('#')[0]}});
+ say('authStatus',error?error.message:'Si ese correo puede recibir enlaces, te llegará un enlace para iniciar sesión. Revisa también spam.',!!error);
+ $('loginBtn').disabled=false;
+});
+$('logoutBtn').addEventListener('click',async()=>{await supabase.auth.signOut();say('authStatus','Has cerrado sesión.');});
+$('claimBtn').addEventListener('click',async()=>{
+ $('claimBtn').disabled=true;say('claimStatus','Comprobando tu reclamación diaria…');
+ const {data,error}=await supabase.rpc('claim_daily');
+ if(error){const msg=error.message||'';say('claimStatus',msg.includes('ALREADY_CLAIMED')?'Ya reclamaste tus monedas de hoy. Vuelve mañana.':'No se pudo reclamar. Comprueba tu conexión e intenta de nuevo.',true);}
+ else {say('claimStatus',`¡Reclamaste ${data?.awarded ?? 10} monedas! Vuelve mañana para reclamar de nuevo.`);await loadDashboard();}
+ $('claimBtn').disabled=false;
+});
+if(configured){
+ supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+ const {data:{session}}=await supabase.auth.getSession();await showSession(session);
+ supabase.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>showSession(session),0)});
+}else{
+ say('authStatus','Modo de configuración: añade tus claves públicas de Supabase en el código para activar cuentas y saldo compartido.',true);
+ $('loginBtn').textContent='Configurar primero';
+}
+</script>
+</body></html>
